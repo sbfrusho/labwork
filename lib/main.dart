@@ -27,7 +27,7 @@ class FuturePage extends StatefulWidget {
 }
 
 class _FuturePageState extends State<FuturePage> {
-  String? result;
+  String result = '';
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,6 @@ class _FuturePageState extends State<FuturePage> {
             Spacer(),
             ElevatedButton(
               onPressed: () {
-                Text("Clicked ");
                 count();
                 setState(() {});
                 getData()
@@ -53,13 +52,19 @@ class _FuturePageState extends State<FuturePage> {
                   result = 'An error occured';
                   setState(() {});
                 });
+
+                getNumber().then((value) => {
+                  setState((){
+                    result = value.toString();
+                  })
+                });
               },
               child: Text(
                 'GO!',
               ),
             ),
             Spacer(),
-            Text(result!),
+            Text(result),
             Spacer(),
             CircularProgressIndicator(),
             Spacer(),
@@ -99,5 +104,17 @@ class _FuturePageState extends State<FuturePage> {
     setState(() {
       result = total.toString();
     });
+  }
+
+  late Completer completer;
+  Future getNumber(){
+    completer = Completer<int>();
+    calculate();
+    return completer.future;
+  }
+
+  Future calculate() async{
+    await Future.delayed(const Duration(seconds: 5));
+    completer.complete(42);
   }
 }
